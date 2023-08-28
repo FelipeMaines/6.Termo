@@ -91,3 +91,43 @@ body {
   border: 2px solid grey;
   margin-top: 10px;
 }
+
+.estatisticas {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background-color: white;
+  width: 15ch;
+  height: 20vh;
+
+  margin-left: 10vh;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resultado {
+  display: flex;
+  justify-content: end;
+  margin: 0vh 1vh 0 1vh;
+  background-color: grey;
+  width: 100%;
+  height: 20px;
+  border: 1px solid blue;
+  /* margin: 10px 0 0 0 ;; */
+}
+
+.container-estatistica {
+  display:  flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantidade {
+  color: black;
+  font-size: 18px;
+}

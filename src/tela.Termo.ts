@@ -10,6 +10,10 @@ class TelaTermo {
     pnlTermo: HTMLDivElement;
     btnReset: HTMLButtonElement;
     btnApagar: HTMLButtonElement;
+    estatistica: Array<number>;
+    pnlEstatisticas: HTMLDivElement;
+    pnlContainerEstatistica: NodeListOf<HTMLDivElement>;
+
 
     constructor() {
 
@@ -19,15 +23,48 @@ class TelaTermo {
 
         this.pnlTeclado = document.querySelector('#pnlTeclado') as HTMLDivElement;
 
+        this.pnlEstatisticas = document.querySelector('.estatisticas') as HTMLDivElement;
+
+        this.pnlContainerEstatistica = document.querySelectorAll('.estatisticas > .container-estatistica > .resultado')
+
         this.btnEnter = document.querySelector('#btnEnter') as HTMLButtonElement;
 
         this.btnReset = document.querySelector('.btn-Reset') as HTMLButtonElement;
 
         this.btnApagar = document.querySelector('.btnApagar') as HTMLButtonElement;
 
+        this.estatistica = this.PegarValorEstatistica();
+
         this.jogo = new Jogo();
 
         this.RegistarEventos();
+
+        this.ArrumarTelaEstatistica();
+    }
+
+    PegarValorEstatistica(): Array<number>{
+        let arraystr = localStorage.getItem('estatistica');
+        
+        if(arraystr !== null){
+            let arrayEstatistica : Array<number> = JSON.parse(arraystr);
+            return arrayEstatistica; 
+        }
+        else{
+            return [0, 0, 0, 0, 0, 0];
+        }
+    }
+
+    ArrumarTelaEstatistica(){
+
+        for(let i = 0; i < 6; i++){
+            let colunaTentativa = this.pnlContainerEstatistica[i];
+
+            colunaTentativa.textContent = this.estatistica[i].toString();
+
+            if(this.estatistica[i] > 0){
+                colunaTentativa.style.backgroundColor = 'blue';
+            }
+        }
     }
 
     RegistarEventos() {
@@ -93,13 +130,34 @@ class TelaTermo {
 
         this.TrocarCorDiv(posicoesCorretas);
 
-        if (this.jogo.JogadorGanhou(palavraChutada)) 
+        if (this.jogo.JogadorGanhou(palavraChutada)) {
             this.MostrarMensagemFinal('Parabens, Você Venceu!!', 'notificacao-vitoria');
 
-        else if(this.jogo.JogadorPerdeu())
+            this.AdicionarLocalStorage();
+        }
+
+        else if(this.jogo.JogadorPerdeu()){
             this.MostrarMensagemFinal('Infelizmente, Você Perdeu :(', 'notificacao-derrota');
 
+            this.AdicionarLocalStorage();
+        }
+
         this.contador = 0;
+    }
+
+    private AdicionarLocalStorage() {
+        
+        if(this.jogo.JogadorPerdeu())
+            this.estatistica[this.estatistica.length - 1]++;
+        else{
+            this.estatistica[this.jogo.linha - 1]++;
+        }
+
+        let strEstatistica = JSON.stringify(this.estatistica);
+
+        localStorage.setItem('estatistica', strEstatistica);
+
+        this.ArrumarTelaEstatistica();
     }
 
     private MostrarMensagemFinal(mesangem: string, classificao: string) {
